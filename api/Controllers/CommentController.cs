@@ -43,7 +43,14 @@ namespace api.Controllers
         [HttpPost("{stockId}")]
         public async Task<IActionResult> Create([FromRoute] int stockId, CreateCommentDto commentDto)
         {
-            if(!await _stock)
+            if(!await _stockRepo.StockExists(stockId))
+            {
+                return BadRequest("Stock deos not exist");
+            }
+            var commentModel = commentDto.ToCommentFromCreate(stockId);
+            await _commentRepo.CreateAsync(commentModel);
+            return CreatedAtAction(nameof(GetById), new {id = commentModel}, commentModel.ToCommentDto());
+
         }
 
     }
