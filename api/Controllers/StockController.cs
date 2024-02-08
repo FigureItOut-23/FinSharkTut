@@ -6,6 +6,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos.Stock;
+using api.Helpers;
 using api.Interfaces;
 using api.Mappers;
 using api.Models;
@@ -36,31 +37,16 @@ namespace api.Controllers
             _stockRepository = stockRepository;
         }
 
-        /*
-            Explanation of the following:
-            IActionResult is an interface in ASP.NET Core that represents the result of an action method. It's designed to provide flexibility in what an action method can return. 
-            public IActionResult GetAll(): This is a public method named GetAll that returns an IActionResult. 
-            IActionResult represents the result of an action method in ASP.NET Core, which can include various types of results such as views, JSON data, or HTTP status codes.
-            
-            var stocks = _context.Stocks.ToList();: Inside the method, it retrieves all the records from the Stocks table or entity set in the _context object. 
-            Here, _context refers to an instance of a database context class. The Stocks property presumably represents a DbSet or collection of Stock entities defined within the context.
-
-            .ToList(): This method is used to materialize the query and retrieve the data from the database as a list. 
-            It executes the query and returns all the records from the Stocks table as a list of Stock objects.
-        */
+      
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            /*
-                In summary, this code snippet retrieves Stock entities from a database context, converts them into StockDto objects using the ToStockDto() extension method, 
-                and stores the resulting sequence of StockDto objects in the variable stocks
-            */
-            var stocks =  await _stockRepository.GetAllAsync();
+            var stocks =  await _stockRepository.GetAllAsync(query);
 
             var stockDto = stocks.Select(s => s.ToStockDto());
             return Ok(stocks); //This line returns an HTTP 200 OK response along with the stocks data
