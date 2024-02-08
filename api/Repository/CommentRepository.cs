@@ -6,6 +6,7 @@ using api.Data;
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Identity.Client;
 
 namespace api.Repository
@@ -25,6 +26,19 @@ namespace api.Repository
             return commentModel;
         }
 
+        public async Task<Comment?> DeleteAsync(int id)
+        {
+            var commentModel = await _context.Comments.FirstOrDefaultAsync(x => x.Id == id);
+            if (commentModel == null)
+            {
+                return null;
+            }
+
+            _context.Comments.Remove(commentModel);
+            await _context.SaveChangesAsync();
+            return commentModel;
+        }
+
         public async Task<List<Comment>> GetAllAsync()
         {
             return await _context.Comments.ToListAsync();
@@ -34,5 +48,6 @@ namespace api.Repository
         {
             return await _context.Comments.FindAsync(id);
         }
+         
     }
 }
