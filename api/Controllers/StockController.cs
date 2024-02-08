@@ -51,6 +51,11 @@ namespace api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             /*
                 In summary, this code snippet retrieves Stock entities from a database context, converts them into StockDto objects using the ToStockDto() extension method, 
                 and stores the resulting sequence of StockDto objects in the variable stocks
@@ -61,10 +66,15 @@ namespace api.Controllers
             return Ok(stocks); //This line returns an HTTP 200 OK response along with the stocks data
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
 
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             //before DI: var stock = await _context.Stocks.FindAsync(id);
             var stock = await _stockRepository.GetByIdAsync(id);
             if (stock == null)
@@ -79,6 +89,11 @@ namespace api.Controllers
         //you need the FromBody because the data is being sent in the form of a JSON. Not passing data through URL, passing it in body of HTTP
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto stockDto)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var stockModel = stockDto.ToStockFromCreateDto();
             //  before:  await _context.Stocks.AddAsync(stockModel);
             //    await _context.SaveChangesAsync();
@@ -93,10 +108,15 @@ namespace api.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
+        [Route("{id:int}")]
         
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto updateDto)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             // When the retrieval happens, EF starts tracking the object
 
             //before DI: var stockModel = await _context.Stocks.FirstOrDefaultAsync(x => x.Id == id);
@@ -120,10 +140,15 @@ namespace api.Controllers
         }
 
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:int}")]
 
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             //before DI:var stockModel = await _context.Stocks.FirstOrDefaultAsync(x => x.Id == id);
             var stockModel = await _stockRepository.DeleteAsync(id);
             if (stockModel == null)
