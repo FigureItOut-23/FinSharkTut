@@ -50,8 +50,8 @@ namespace api.Controllers
 
             var stocks =  await _stockRepository.GetAllAsync(query);
 
-            var stockDto = stocks.Select(s => s.ToStockDto());
-            return Ok(stocks); //This line returns an HTTP 200 OK response along with the stocks data
+            var stockDto = stocks.Select(s => s.ToStockDto()).ToList();
+            return Ok(stockDto); //This line returns an HTTP 200 OK response along with the stocks data
         }
 
         [HttpGet("{id:int}")]
