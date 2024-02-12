@@ -63,6 +63,11 @@ namespace api.Repository
             return await stocks.Skip(skipNummber).Take(query.PageSize).ToListAsync();
         }
 
+        public async Task<Stock?> GetByASymbolAsync(string symbol)
+        {
+            return await _context.Stocks.FirstOrDefaultAsync(s => s.Symbol == symbol);
+        }
+
         public async Task<Stock?> GetByIdAsync(int id)
         {
             return await _context.Stocks.Include(c => c.Commments).FirstOrDefaultAsync(i => i.Id == id);
